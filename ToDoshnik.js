@@ -4,19 +4,40 @@ let valueInput = "";
 let addTasks = null;
 let indexEdit = -1;
 
-window.onload = function init(){
+window.onload = async function init(){
     addTasks = document.getElementById('add-tasks');
     addTasks.addEventListener('change',updateValue);
+    const resp = await fetch("http://localhost:8000/allTasks", {
+      method: "GET"
+});
+   let result = await resp.json();
+   mainArr = result.data;
     render();
 
  
 }
 
-onClick=()=>{
+onClick = async () => {
  mainArr.push({
     text: valueInput,
     isCheck: false
 });
+const resp = await fetch("http://localhost:8000/createTask", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json;charset=utf-8",
+    "Access-Control-Allow-Origin":"*"
+  },
+  body: JSON.stringify({
+    text: valueInput,
+    isCheck: false
+  })
+});
+let result = await resp.json();
+console.log("result")
+ mainArr = result.data;
+
+
 localStorage.setItem('tasks', JSON.stringify(mainArr));
   valueInput = "";
   addTasks.value = "";
