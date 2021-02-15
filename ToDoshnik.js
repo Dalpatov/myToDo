@@ -14,8 +14,7 @@ window.onload = async function init(){
    mainArr = result.data;
     render();
 
- 
-}
+};
 
 onClick = async () => {
  mainArr.push({
@@ -34,15 +33,14 @@ const resp = await fetch("http://localhost:8000/createTask", {
   })
 });
 let result = await resp.json();
-console.log("result")
+
  mainArr = result.data;
-
-
 localStorage.setItem('tasks', JSON.stringify(mainArr));
   valueInput = "";
   addTasks.value = "";
  render();
 }
+
 updateValue = (event)=>{
     valueInput = event.target.value;  //то что нуходится в инпуте
 }
@@ -118,8 +116,14 @@ onChangeCheckbox = (index) =>{
   render();
 }
 
-delOnClick = (index) =>{
-  mainArr.splice(index, 1);
+delOnClick = async (index,item) =>{
+  // mainArr.splice(index, 1);
+  let allId = mainArr[index].id;
+  const resp = await fetch(`http://localhost:8000/deleteTask?id=${allId}`, {
+  method: "DELETE"
+});
+  let result = await resp.json();
+  mainArr = result.data;
   localStorage.setItem('tasks', JSON.stringify(mainArr)); 
   render(); 
 }
@@ -131,13 +135,33 @@ editOnClick = (index) =>{
 }
 
 updateTextTask = (event)=>{
-   mainArr[indexEdit].text = event.target.value; 
-   localStorage.setItem('tasks', JSON.stringify(mainArr));
-   render();
+  mainArr[indexEdit].text = event.target.value ; 
+  
+
+  localStorage.setItem('tasks', JSON.stringify(mainArr));
+  render();
 }
 
-saveOnClick = () =>{
+saveOnClick = async (index) =>{
+  
+  const resp = await fetch("http://localhost:8000/updateTask", {
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json;charset=utf-8",
+    "Access-Control-Allow-Origin":"*"
+},
+  body: JSON.stringify({  
+   id: mainArr[index].id,
+   text: mainArr[indexEdit].text,
+   isCheck: mainArr[index]
+})
+
+
+});
+  let result = await resp.json();
+  console.log("result");
   indexEdit = -1;
+   mainArr = result.data;
   localStorage.setItem('tasks', JSON.stringify(mainArr));
   render()
 }
