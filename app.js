@@ -1,21 +1,47 @@
-// const express = require('express')
-// const app = express();
+const express = require('express');
+const mongoose = require("mongoose");
+const app = express();
+const Schema = mongoose.Schema;
 
-// app.get('/allTask', (req, res) => {
-//   res.send(req.query);
-// });
+const taskScheme = new Schema({
+    text: String,
+    isCheck: Boolean
+});
 
-// app.post('/createTask', (req, res) => {
-//   res.send(req.body);
-// });
+const url = "mongodb+srv://restart987:restart987@cluster0.20a2n.mongodb.net/BDTODO?retryWrites=true&w=majority";
+ mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true});
+ const Task = mongoose.model("tasks",taskScheme);
 
-// // app.delete('/deleteTask', (req, res) => {
+ app.get('/allTask', (req, res) => {
+  const task = new Task({
+    text: "First task",
+    isCheck: false
+});
+    task.save().then(result => {
+    res.send(result)
+})
+})
+
+ app.delete('/deleteTask', (req, res) => {
+  Task.deleteOne().then(result => {
+     res.send("done");
+})   
+});
+
+
+  app.patch('/updateTask', (req, res) => {
+    Task.updateOne(result => {
+      res.send("update");
+});     
+});
+
+app.post('/createTask', (req, res) => {
+  Task.find().then(result => {
+    res.send({data:result});
+})
+});
+
   
-// // });
-// // app.patch('/updateTask', (req, res) => {
-  
-// // });
-
-// app.listen(8000, () => {
-//   console.log('Example app listening on port 8000!')
-// });
+app.listen(8000, () => {
+  console.log('Example app listening on port 8000!')
+});

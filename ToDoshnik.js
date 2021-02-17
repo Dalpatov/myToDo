@@ -153,10 +153,8 @@ saveOnClick = async (index) =>{
   body: JSON.stringify({  
    id: mainArr[index].id,
    text: mainArr[indexEdit].text,
-   isCheck: mainArr[index]
+   isCheck: mainArr[indexEdit]
 })
-
-
 });
   let result = await resp.json();
   console.log("result");
