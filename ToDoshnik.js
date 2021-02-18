@@ -110,16 +110,33 @@ render = () =>{
        container.appendChild(imageDelete);
     });
 }
-onChangeCheckbox = (index) =>{
+onChangeCheckbox = async (index) =>{
   mainArr[index].isCheck = !mainArr[index].isCheck;               //взяли текущее значение из(text:true) и изменили на противоположное
+  const resp = await fetch("http://localhost:8000/updateTask", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      "Access-Control-Allow-Origin":"*"
+  },
+    body: JSON.stringify({  
+     id: mainArr[index].id,
+     text: mainArr[index].text,
+     isCheck: mainArr[index].isCheck
+  })
+  });
+    let result = await resp.json();
+    console.log("result");
+    indexEdit = -1;
+     mainArr = result.data;
+  
   localStorage.setItem('tasks', JSON.stringify(mainArr));
   render();
 }
 
 delOnClick = async (index,item) =>{
-  // mainArr.splice(index, 1);
-  let allId = mainArr[index].id;
-  const resp = await fetch(`http://localhost:8000/deleteTask?id=${allId}`, {
+  
+  let allId = mainArr[index]._id;
+  const resp = await fetch(`http://localhost:8000/deleteTask?_id=${allId}`, {
   method: "DELETE"
 });
   let result = await resp.json();
@@ -153,7 +170,7 @@ saveOnClick = async (index) =>{
   body: JSON.stringify({  
    id: mainArr[index].id,
    text: mainArr[indexEdit].text,
-   isCheck: mainArr[indexEdit]
+   isCheck: mainArr[index.Edit].isCheck
 })
 });
   let result = await resp.json();

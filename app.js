@@ -14,24 +14,30 @@ const url = "mongodb+srv://restart987:restart987@cluster0.20a2n.mongodb.net/BDTO
 
  app.get('/allTask', (req, res) => {
   const task = new Task({
-    text: "First task",
-    isCheck: false
+    text: req.body.text,
+    isCheck: req.body.req
 });
     task.save().then(result => {
-    res.send(result)
+        Task.find().then(result => {
+            res.send({data:result});
+        })
 })
 })
 
  app.delete('/deleteTask', (req, res) => {
-  Task.deleteOne().then(result => {
-     res.send("done");
+  Task.deleteOne({_id: req.body._id}).then(result => {
+    Task.find().then(result => {
+        res.send({data:result});
+    })
 })   
 });
 
 
   app.patch('/updateTask', (req, res) => {
-    Task.updateOne(result => {
-      res.send("update");
+    Task.updateOne({_id: peq.body._id},req.body).then(result => {
+        Task.find().then(result => {
+            res.send({data:result});
+        })
 });     
 });
 
