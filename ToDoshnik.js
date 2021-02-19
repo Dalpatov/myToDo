@@ -12,14 +12,15 @@ window.onload = async function init(){
 });
    let result = await resp.json();
    mainArr = result.data;
-    render();
+   localStorage.setItem('tasks', JSON.stringify(mainArr));
+  render();
 
 };
 
 onClick = async () => {
  mainArr.push({
-    text: valueInput,
-    isCheck: false
+  text: valueInput,
+  isCheck: false
 });
 const resp = await fetch("http://localhost:8000/createTask", {
   method: "POST",
@@ -32,10 +33,9 @@ const resp = await fetch("http://localhost:8000/createTask", {
     isCheck: false
   })
 });
-let result = await resp.json();
-
- mainArr = result.data;
-localStorage.setItem('tasks', JSON.stringify(mainArr));
+  let result = await resp.json();
+  mainArr = result.data;
+  localStorage.setItem('tasks', JSON.stringify(mainArr));
   valueInput = "";
   addTasks.value = "";
  render();
@@ -117,24 +117,20 @@ onChangeCheckbox = async (index) =>{
     headers: {
       "Content-Type": "application/json;charset=utf-8",
       "Access-Control-Allow-Origin":"*"
-  },
+},
     body: JSON.stringify({  
-     id: mainArr[index].id,
+     _id: mainArr[index]._id,
      text: mainArr[index].text,
      isCheck: mainArr[index].isCheck
-  })
-  });
-    let result = await resp.json();
-    console.log("result");
-    indexEdit = -1;
-     mainArr = result.data;
-  
+})
+});
+  let result = await resp.json();
+  mainArr = result.data;
   localStorage.setItem('tasks', JSON.stringify(mainArr));
   render();
 }
 
 delOnClick = async (index,item) =>{
-  
   let allId = mainArr[index]._id;
   const resp = await fetch(`http://localhost:8000/deleteTask?_id=${allId}`, {
   method: "DELETE"
@@ -153,14 +149,11 @@ editOnClick = (index) =>{
 
 updateTextTask = (event)=>{
   mainArr[indexEdit].text = event.target.value ; 
-  
-
   localStorage.setItem('tasks', JSON.stringify(mainArr));
   render();
 }
 
 saveOnClick = async (index) =>{
-  
   const resp = await fetch("http://localhost:8000/updateTask", {
   method: "PATCH",
   headers: {
@@ -168,15 +161,15 @@ saveOnClick = async (index) =>{
     "Access-Control-Allow-Origin":"*"
 },
   body: JSON.stringify({  
-   id: mainArr[index].id,
+   _id: mainArr[index]._id,
    text: mainArr[indexEdit].text,
-   isCheck: mainArr[index.Edit].isCheck
+   isCheck: mainArr[indexEdit].isCheck
 })
 });
   let result = await resp.json();
-  console.log("result");
   indexEdit = -1;
-   mainArr = result.data;
+  mainArr = result.data;
   localStorage.setItem('tasks', JSON.stringify(mainArr));
   render()
+  
 }
